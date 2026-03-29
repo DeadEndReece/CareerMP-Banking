@@ -1,0 +1,71 @@
+<div ng-controller="CareerMPBankingController" class="careermp-banking-root is-left-anchored">
+	<link rel="stylesheet" type="text/css" href="/ui/modules/apps/CareerMP-Banking/app.css">
+	<div id="banking-main-container">
+		<div id="banking-container">
+			<section id="banking-panel" class="careermp-banking-app">
+			<header class="careermp-banking-header">
+				<div class="careermp-banking-brand">
+					<p class="careermp-banking-brand-line">Bank Of Career<span class="careermp-banking-brand-mark">MP</span></p>
+				</div>
+			</header>
+
+			<section class="careermp-banking-summary">
+				<div class="careermp-banking-balance-row">
+					<span class="careermp-banking-balance-label">Balance</span>
+					<span class="careermp-banking-balance-value">{{ formatMoney(balance, true) }}</span>
+				</div>
+				<div class="careermp-banking-meta">
+					<span>{{ visiblePlayers.length }} online</span>
+					<button
+						type="button"
+						class="careermp-banking-meta-toggle"
+						ng-class="{ 'is-enabled': receiveEnabled, 'is-disabled': !receiveEnabled }"
+						ng-click="toggleReceiving()">
+						{{ receiveEnabled ? 'Incoming enabled' : 'Incoming disabled' }}
+					</button>
+				</div>
+			</section>
+
+			<section class="careermp-banking-controls">
+				<label class="careermp-banking-field">
+					<span>Transfer amount</span>
+					<input type="number" min="1" max="999999" step="1" ng-model="transferAmount" ng-focus="engageFocus()" ng-blur="releaseFocus()">
+				</label>
+
+				<div class="careermp-banking-presets">
+					<button ng-repeat="amount in amountPresets" ng-click="setTransferAmount(amount)">
+						{{ formatMoney(amount) }}
+					</button>
+				</div>
+			</section>
+
+			<section class="careermp-banking-list">
+				<div class="careermp-banking-list-title">Online players</div>
+
+				<table class="careermp-banking-table">
+					<thead>
+						<tr>
+							<th>Player</th>
+							<th>Action</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="player in visiblePlayers track by player.id">
+							<td>{{ getDisplayName(player) }}</td>
+							<td>
+								<button ng-disabled="!canSendToPlayer(player)" ng-click="sendPayment(player)">
+									{{ 'Send ' + formatMoney(transferAmount || 0) }}
+								</button>
+							</td>
+						</tr>
+						<tr ng-if="!visiblePlayers.length">
+							<td colspan="2">No other players online.</td>
+						</tr>
+					</tbody>
+				</table>
+			</section>
+			</section>
+		</div>
+		<button class="careermp-banking-tab" id="banking-show-button" ng-click="togglePanel()">B</button>
+	</div>
+</div>

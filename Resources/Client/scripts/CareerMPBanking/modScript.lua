@@ -1,0 +1,2 @@
+setExtensionUnloadMode('careerMPBanking', 'manual')
+loadManualUnloadExtensions()

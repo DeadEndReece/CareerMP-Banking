@@ -1,0 +1,452 @@
+.careermp-banking-root {
+	position: relative;
+	height: 100%;
+	width: 100%;
+	overflow: visible;
+	pointer-events: none;
+	--banking-tab-thickness: 28px;
+	--banking-tab-length: 75px;
+	--banking-tab-border-width: 3px;
+	--banking-shell-bg: linear-gradient(180deg, rgba(24, 26, 31, 0.98), rgba(15, 17, 22, 0.96));
+	--banking-card-bg: linear-gradient(180deg, rgba(46, 50, 61, 0.97), rgba(36, 40, 50, 0.95));
+	--banking-card-border: rgba(255, 255, 255, 0.07);
+	--banking-accent: #ff6f12;
+	--banking-accent-strong: #ff7d1f;
+	--banking-text: #f5f5f7;
+	--banking-text-muted: rgba(245, 245, 247, 0.74);
+	--banking-surface-dark: rgba(18, 20, 26, 0.9);
+}
+
+#banking-main-container {
+	position: relative;
+	height: 100%;
+	width: 100%;
+	overflow: visible;
+}
+
+#banking-container {
+	display: none;
+	position: absolute;
+	box-sizing: border-box;
+	border: 2px solid rgba(255, 255, 255, 0.08);
+	border-radius: 18px;
+	background: var(--banking-shell-bg);
+	box-shadow: none;
+	z-index: 1;
+	opacity: 0;
+	transition: transform 180ms ease, opacity 180ms ease;
+	overflow-y: auto;
+	overflow-x: hidden;
+	pointer-events: none;
+	will-change: transform, opacity;
+}
+
+.careermp-banking-root.is-left-anchored #banking-container {
+	top: 0;
+	bottom: 0;
+	left: calc(var(--banking-tab-thickness) - var(--banking-tab-border-width));
+	width: calc(100% - var(--banking-tab-thickness) + var(--banking-tab-border-width));
+	transform: translateX(calc(0% - 10px));
+	transform-origin: left center;
+}
+
+.careermp-banking-root.is-right-anchored #banking-container {
+	top: 0;
+	bottom: 0;
+	right: calc(var(--banking-tab-thickness) - var(--banking-tab-border-width));
+	width: calc(100% - var(--banking-tab-thickness) + var(--banking-tab-border-width));
+	transform: translateX(calc(-0% + 10px));
+	transform-origin: right center;
+}
+
+.careermp-banking-root.is-top-anchored #banking-container {
+	top: calc(var(--banking-tab-thickness) - var(--banking-tab-border-width));
+	left: 0;
+	right: 0;
+	height: calc(100% - var(--banking-tab-thickness) + var(--banking-tab-border-width));
+	transform: translateY(calc(0% - 10px));
+	transform-origin: top center;
+}
+
+.careermp-banking-root.is-bottom-anchored #banking-container {
+	bottom: calc(var(--banking-tab-thickness) - var(--banking-tab-border-width));
+	left: 0;
+	right: 0;
+	height: calc(100% - var(--banking-tab-thickness) + var(--banking-tab-border-width));
+	transform: translateY(calc(-0% + 10px));
+	transform-origin: bottom center;
+}
+
+#banking-container.is-open {
+	opacity: 1;
+	transform: none;
+	pointer-events: auto;
+}
+
+#banking-container::-webkit-scrollbar {
+	width: 0;
+	background: transparent;
+}
+
+.careermp-banking-app {
+	min-height: 100%;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: 18px;
+	padding: 18px;
+	border: 0;
+	border-radius: 0;
+	background: transparent;
+	box-shadow: none;
+	color: var(--banking-text);
+	overflow: visible;
+	box-sizing: border-box;
+}
+
+.careermp-banking-tab {
+	position: absolute;
+	z-index: 2;
+	box-sizing: border-box;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-weight: bold;
+	width: var(--banking-tab-thickness);
+	height: var(--banking-tab-length);
+	border: var(--banking-tab-border-width) solid transparent;
+	padding: 0;
+	margin: 0;
+	background:
+		linear-gradient(180deg, #fe6500, #fe6500) padding-box,
+		linear-gradient(180deg, #000000, #000000) border-box;
+	color: #ffffff;
+	font-size: 20px;
+	line-height: 1;
+	transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, transform 180ms ease;
+	cursor: pointer;
+	box-shadow: none;
+	pointer-events: auto;
+}
+
+.careermp-banking-root.is-left-anchored .careermp-banking-tab {
+	left: 0;
+	top: 50%;
+	transform: translateY(-50%);
+	border-radius: 0 10px 10px 0;
+}
+
+.careermp-banking-root.is-right-anchored .careermp-banking-tab {
+	right: 0;
+	top: 50%;
+	transform: translateY(-50%);
+	border-radius: 10px 0 0 10px;
+}
+
+.careermp-banking-root.is-top-anchored .careermp-banking-tab,
+.careermp-banking-root.is-bottom-anchored .careermp-banking-tab {
+	width: var(--banking-tab-length);
+	height: var(--banking-tab-thickness);
+}
+
+.careermp-banking-root.is-top-anchored .careermp-banking-tab {
+	top: 0;
+	left: 50%;
+	transform: translateX(-50%);
+	border-radius: 0 0 10px 10px;
+}
+
+.careermp-banking-root.is-bottom-anchored .careermp-banking-tab {
+	bottom: 0;
+	left: 50%;
+	transform: translateX(-50%);
+	border-radius: 10px 10px 0 0;
+}
+
+.careermp-banking-header {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 12px;
+	width: 100%;
+}
+
+.careermp-banking-brand {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	box-sizing: border-box;
+	min-height: 56px;
+	padding: 0px 18px 8px 24px;
+	border-radius: 4px 12px 12px 4px;
+	background: linear-gradient(180deg, rgba(61, 61, 64, 0.96), rgba(47, 47, 50, 0.94));
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+	overflow: hidden;
+}
+
+.careermp-banking-brand::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	width: 16px;
+	background: linear-gradient(180deg, var(--banking-accent-strong), var(--banking-accent));
+	clip-path: polygon(0 0, 100% 0, 72% 100%, 0 100%);
+}
+
+.careermp-banking-brand-line {
+	display: block;
+	width: 200%;
+	margin: 0;
+	padding-left: 0;
+	text-align: center;
+	transform-origin: center center;
+	color: var(--banking-text);
+	font-size: 1.93rem;
+	font-weight: 800;
+	font-style: italic;
+	line-height: 1.20;
+	letter-spacing: 0.01em;
+	white-space: nowrap;
+}
+
+.careermp-banking-brand-mark {
+	position: relative;
+	display: inline-block;
+}
+
+.careermp-banking-brand-mark::after {
+	content: "\01F451";
+	display: inline-block;
+	position: static;
+	margin-left: 0em;
+	font-size: 1.50em;
+	line-height: 0.8;
+	vertical-align: 0.1em;
+	opacity: 0.9;
+	pointer-events: none;
+}
+
+.careermp-banking-presets button,
+.careermp-banking-table button {
+	border: 1px solid #ff6f12b8;
+	border-radius: 10px;
+	background: linear-gradient(180deg, rgba(30, 33, 40, 0.98), rgba(18, 20, 25, 0.98));
+	color: var(--banking-text);
+	font-weight: 700;
+	cursor: pointer;
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+	transition: transform 120ms ease, box-shadow 120ms ease, opacity 120ms ease, border-color 120ms ease, background-color 120ms ease;
+}
+
+.careermp-banking-presets button:hover,
+.careermp-banking-table button:hover {
+	transform: translateY(-1px);
+	border-color: rgba(255, 137, 58, 0.92);
+	box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
+}
+
+.careermp-banking-summary,
+.careermp-banking-controls,
+.careermp-banking-list {
+	border: 1px solid var(--banking-card-border);
+	border-radius: 14px;
+	background: var(--banking-card-bg);
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.careermp-banking-summary {
+	padding: 22px;
+}
+
+.careermp-banking-balance-row {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 14px;
+}
+
+.careermp-banking-balance-label {
+	font-size: 1.6rem;
+	font-weight: 800;
+	color: var(--banking-text);
+	line-height: 1;
+	letter-spacing: 0.01em;
+}
+
+.careermp-banking-balance-value {
+	font-size: 2.45rem;
+	font-weight: 800;
+	letter-spacing: -0.03em;
+	line-height: 1;
+}
+
+.careermp-banking-meta {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin-top: 10px;
+	color: var(--banking-text-muted);
+}
+
+.careermp-banking-meta span,
+.careermp-banking-meta-toggle {
+	padding: 6px 10px;
+	border-radius: 999px;
+	background: rgba(24, 27, 34, 0.7);
+	border: 1px solid rgba(255, 255, 255, 0.06);
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.careermp-banking-meta-toggle {
+	color: var(--banking-text);
+	font: inherit;
+	cursor: pointer;
+	transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease, transform 120ms ease;
+}
+
+.careermp-banking-meta-toggle:hover {
+	transform: translateY(-1px);
+}
+
+.careermp-banking-meta-toggle.is-enabled {
+	background: rgba(41, 95, 69, 0.6);
+	border-color: rgba(114, 214, 160, 0.44);
+	color: #d0ffe3;
+}
+
+.careermp-banking-meta-toggle.is-disabled {
+	background: rgba(97, 38, 38, 0.58);
+	border-color: rgba(242, 116, 116, 0.42);
+	color: #ffc0c0;
+}
+
+.careermp-banking-controls {
+	display: grid;
+	grid-template-columns: minmax(126px, 138px) minmax(0, 1fr);
+	gap: 14px;
+	padding: 18px;
+	align-items: end;
+}
+
+.careermp-banking-field {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	min-width: 0;
+}
+
+.careermp-banking-field span,
+.careermp-banking-list-title {
+	font-size: 0.98rem;
+	font-weight: 700;
+	color: var(--banking-text);
+}
+
+.careermp-banking-field input {
+	width: 100%;
+	max-width: 138px;
+	box-sizing: border-box;
+	padding: 11px 12px;
+	border: 1px solid #ff6f12b8;
+	border-radius: 10px;
+	background: rgba(15, 17, 23, 0.94);
+	color: var(--banking-text);
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.careermp-banking-presets {
+	display: grid;
+	grid-template-columns: repeat(2, max-content);
+	justify-content: end;
+	gap: 8px;
+}
+
+.careermp-banking-presets button {
+	min-width: 88px;
+	padding: 10px 12px;
+}
+
+.careermp-banking-toggle {
+	grid-column: 1 / -1;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	color: var(--banking-text);
+}
+
+.careermp-banking-hint {
+	grid-column: 1 / -1;
+	margin: 0;
+	font-size: 0.88rem;
+	color: var(--banking-text-muted);
+}
+
+.careermp-banking-list {
+	padding: 18px;
+	overflow: auto;
+}
+
+.careermp-banking-table {
+	width: 100%;
+	margin-top: 12px;
+	border-collapse: collapse;
+	color: var(--banking-text);
+}
+
+.careermp-banking-table th,
+.careermp-banking-table td {
+	padding: 12px 10px;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+	text-align: left;
+}
+
+.careermp-banking-table th {
+	font-size: 0.84rem;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	color: var(--banking-text-muted);
+}
+.careermp-banking-table button {
+	padding: 9px 12px;
+}
+
+.careermp-banking-table button[disabled] {
+	cursor: not-allowed;
+	opacity: 0.45;
+	box-shadow: none;
+	transform: none;
+}
+
+@media (max-width: 700px) {
+	#banking-container {
+		width: min(420px, calc(100vw - 41px));
+	}
+
+	.careermp-banking-controls {
+		grid-template-columns: 1fr;
+	}
+
+	.careermp-banking-field input {
+		max-width: none;
+	}
+
+	.careermp-banking-presets {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.careermp-banking-presets button {
+		width: 100%;
+	}
+
+	.careermp-banking-balance-value {
+		font-size: 2rem;
+	}
+
+	.careermp-banking-balance-label {
+		font-size: 1.35rem;
+	}
+}
