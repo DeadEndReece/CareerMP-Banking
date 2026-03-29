@@ -17,7 +17,7 @@ A server/client BeamMP banking module for CareerMP that adds a custom BeamNG UI 
 ## Installation
 
 1. Download the latest release.
-2. Extract it into your BeamMP server/client resources so these paths exist:
+2. Extract it into your BeamMP server main directory so these paths exist:
    - `Resources/Server/CareerMPBanking/careerMPBanking.lua`
    - `Resources/Client/CareerMPBanking.zip`
 3. Start BeamMP with the module installed.
