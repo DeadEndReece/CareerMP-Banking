@@ -1,4 +1,4 @@
-# CareerMP Banking
+# 👑 CareerMP Banking
 
 A server/client BeamMP banking module for CareerMP that adds a custom BeamNG UI app for player-to-player payments, live balance display, and incoming payment control.
 
@@ -21,7 +21,7 @@ A server/client BeamMP banking module for CareerMP that adds a custom BeamNG UI 
    - `Resources/Server/CareerMPBanking/careerMPBanking.lua`
    - `Resources/Client/CareerMPBanking.zip`
 3. Start BeamMP with the module installed.
-4. The banking app should be added to supported UI layouts automatically.
+4. The banking app should be added to the Career Freeroam UI layout automatically.
 5. If needed, open the BeamNG UI Apps menu and enable `CareerMP Banking`.
 
 ## What The App Does
