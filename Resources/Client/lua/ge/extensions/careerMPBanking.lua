@@ -3,11 +3,9 @@ local M = {}
 local paymentAllowed = false
 local paymentTimer = 0
 local paymentTimerThreshold = 2.125
-local paymentID = 1
 
 local receiveEnabled = true
 local receivePreferenceSent = false
-local paymentPatchApplied = false
 local layoutRefreshRequested = false
 local lastKnownNickname = ""
 
@@ -208,17 +206,8 @@ local function getUiState()
 end
 
 local function normalizeBool(value)
-	if type(value) == "boolean" then
-		return value
-	end
-
-	if type(value) == "number" then
-		return value ~= 0
-	end
-
 	if type(value) == "string" then
-		value = value:lower()
-		return value == "true" or value == "1" or value == "yes" or value == "on"
+		return value == "true" or value == "1" or value == "yes"
 	end
 
 	return not not value
@@ -237,6 +226,16 @@ local function findPlayerByName(playerName)
 		if playerData.name == playerName then
 			return playerData
 		end
+	end
+end
+
+local function getCareerMPPayments()
+	if careerMPPlayerPayments and careerMPPlayerPayments.payPlayer then
+		return careerMPPlayerPayments
+	end
+
+	if extensions and extensions.careerMPPlayerPayments and extensions.careerMPPlayerPayments.payPlayer then
+		return extensions.careerMPPlayerPayments
 	end
 end
 
@@ -279,97 +278,21 @@ local function payPlayer(playerName, amount)
 	paymentTimer = 0
 	paymentAllowed = false
 
-	TriggerServerEvent("careerMPBankingPayPlayer", jsonEncode({
-		money = amount,
-		tags = { "gameplay" },
-		label = "Paid player: " .. playerData.name,
-		target_player_id = playerData.id,
-		target_player_name = playerData.name
-	}))
-end
-
-local function rxPayment(data)
-	local paymentData = jsonDecode(data or "{}")
-	local amount = tonumber(paymentData.money) or 0
-
-	if career_modules_playerAttributes and career_modules_playerAttributes.addAttributes then
-		career_modules_playerAttributes.addAttributes(
-			{ money = amount },
-			{ tags = paymentData.tags or { "gameplay" }, label = "Payment from player: " .. (paymentData.sender or "Unknown") }
-		)
+	local payments = getCareerMPPayments()
+	if not payments then
+		toast("error", "Payments unavailable!", "CareerMP Player Payments is not loaded.", 2600)
+		return
 	end
 
-	if career_saveSystem and career_saveSystem.saveCurrent then
-		career_saveSystem.saveCurrent()
-	end
-
-	toast("info", "Transaction #" .. paymentID, (paymentData.sender or "Unknown") .. " paid you $" .. amount, 2600)
-	paymentID = paymentID + 1
-end
-
-local function rxConfirmation(data)
-	local paymentData = jsonDecode(data or "{}")
-	local amount = tonumber(paymentData.money) or 0
-
-	if career_modules_playerAttributes and career_modules_playerAttributes.addAttributes then
-		career_modules_playerAttributes.addAttributes(
-			{ money = -amount },
-			{ tags = paymentData.tags or { "gameplay" }, label = paymentData.label or ("Paid player: " .. (paymentData.target_player_name or "Unknown")) }
-		)
-	end
-
-	if career_saveSystem and career_saveSystem.saveCurrent then
-		career_saveSystem.saveCurrent()
-	end
-
-	toast("info", "Transaction #" .. paymentID, "You paid " .. (paymentData.target_player_name or "Unknown") .. " $" .. amount, 2600)
-	paymentID = paymentID + 1
-end
-
-local function rxBounce(data)
-	local paymentData = jsonDecode(data or "{}")
-	local amount = tonumber(paymentData.money) or 0
-	local targetPlayerName = paymentData.target_player_name or "that player"
-	local reason = paymentData.reason or "unknown"
-	local msg = "Your payment of $" .. amount .. " to " .. targetPlayerName .. " was returned."
-
-	if reason == "offline" then
-		msg = targetPlayerName .. " is no longer online. Your payment of $" .. amount .. " was not sent."
-	elseif reason == "ratelimited" then
-		msg = "You are being ratelimited. Your payment of $" .. amount .. " to " .. targetPlayerName .. " was returned."
-	elseif reason == "invalid" then
-		msg = "The payment request was not valid, so nothing was sent."
-	end
-
-	toast("error", "Payment returned!", msg, 2600)
+	payments.payPlayer(playerData.name, amount)
 end
 
 local function rxOptOut(data)
-	local paymentData = jsonDecode(data or "{}")
+	local paymentData = jsonDecode(data or "{}") or {}
 	local amount = tonumber(paymentData.money) or 0
 	local targetPlayerName = paymentData.target_player_name or "That player"
 	local msg = targetPlayerName .. " has incoming payments disabled. Your payment of $" .. amount .. " was not sent."
 	toast("error", "Payments disabled!", msg, 2600)
-end
-
-local function patchCareerMPPaymentFunction()
-	local patchedThisPass = false
-
-	if careerMPEnabler and careerMPEnabler.payPlayer ~= payPlayer then
-		careerMPEnabler.payPlayer = payPlayer
-		patchedThisPass = true
-	end
-
-	if extensions and extensions.careerMPEnabler and extensions.careerMPEnabler.payPlayer ~= payPlayer then
-		extensions.careerMPEnabler.payPlayer = payPlayer
-		patchedThisPass = true
-	end
-
-	if patchedThisPass then
-		paymentPatchApplied = true
-	end
-
-	return paymentPatchApplied
 end
 
 local function placementsMatch(leftPlacement, rightPlacement)
@@ -523,30 +446,20 @@ local function onUpdate(dtReal, dtSim, dtRaw)
 		paymentAllowed = true
 	end
 
-	if not paymentPatchApplied then
-		patchCareerMPPaymentFunction()
+	if layoutRefreshRequested and ui_apps and ui_apps.requestUIAppsData then
+		ui_apps.requestUIAppsData()
+		layoutRefreshRequested = false
 	end
 
 	if not receivePreferenceSent and worldReadyState == 2 then
 		sendReceivePreference()
 	end
-
-	if layoutRefreshRequested and ui_apps and ui_apps.requestUIAppsData then
-		ui_apps.requestUIAppsData()
-		layoutRefreshRequested = false
-	end
 end
 
 local function onExtensionLoaded()
 	loadReceiveEnabledSetting()
-
-	AddEventHandler("careerMPBankingRxPayment", rxPayment)
-	AddEventHandler("careerMPBankingRxConfirmation", rxConfirmation)
-	AddEventHandler("careerMPBankingRxBounce", rxBounce)
 	AddEventHandler("careerMPBankingRxOptOut", rxOptOut)
-
-	patchCareerMPPaymentFunction()
-	log('W', 'careerMPBanking', 'CareerMP Banking LOADED!')
+	log('W', 'careerMPBanking', 'CareerMP Banking LOADED! Using CareerMP Player Payments backend.')
 end
 
 local function onExtensionUnloaded()
