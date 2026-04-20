@@ -1,4 +1,4 @@
-# CareerMP Banking
+# CareerMP Banking 🏦
 
 A custom BeamNG UI app for CareerMP that provides a cleaner banking interface for player payments.
 
